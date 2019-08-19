@@ -1,0 +1,53 @@
+<!--// props get converted in jsx thru babel you can always check your code @ babelsite
+react router library  -->
+<html>
+  <head>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.1/react-router-dom.js"></script>
+    <style>
+    .red {
+      color: red;
+    }
+    </style>
+  </head>
+  <body>
+    <div id='root'></div>
+    <script type='text/babel'>
+      const { render } = ReactDOM;
+      const { Component } = React;
+      const { HashRouter } = ReactRouterDOM;
+      const root = document.querySelector('#root');
+
+      class App extends Component {
+        constructor() {
+          super();
+          this.state = {
+            companies: []
+          };
+        }
+        /*vvv the 2nd part is not going to be a promise...you just get your data
+        check you network tab to see if axios is getting your data  under XHR*/
+        async componentDidMount(){
+          // const response = await axios.get('https://acme-users-api-rev.herokuapp.com/api/companies');
+          // this.setState( { companies: response.data } );
+          const companies = (await axios.get('https://acme-users-api-rev.herokuapp.com/api/companies')).data;
+          this.setState( { companies } );
+
+        }
+        render() {
+          const { companies } = this.state;
+          return (
+            <div>
+              { companies.length }
+            </div>
+          );
+        }
+      }
+
+      render(<App />, root);
+    </script>
+  </body>
+</html>
