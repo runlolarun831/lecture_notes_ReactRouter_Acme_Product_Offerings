@@ -7,19 +7,40 @@ react router library  -->
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.1/react-router-dom.js"></script>
-    <style>
-    .red {
-      color: red;
-    }
-    </style>
+<style>
+body {
+  font-family: verdana;
+}
+.nav {
+  display: flex;
+  justify-content: space-around;
+}
+</style>
   </head>
   <body>
     <div id='root'></div>
     <script type='text/babel'>
       const { render } = ReactDOM;
       const { Component } = React;
-      const { HashRouter } = ReactRouterDOM;
+      const { HashRouter, Link, Route } = ReactRouterDOM;
       const root = document.querySelector('#root');
+
+      const Home = ()=> {
+        return (
+          <h1>Home</h1>
+        );
+      }
+
+      const Companies = ( { data } )=> {
+        return (
+          <div>
+            <h1>Companies</h1>
+            {
+              data.map( company => <li key={company.id}>{ company.name }</li>)
+            }
+          </div>
+        );
+      }
 
       class App extends Component {
         constructor() {
@@ -28,21 +49,23 @@ react router library  -->
             companies: []
           };
         }
-        /*vvv the 2nd part is not going to be a promise...you just get your data
-        check you network tab to see if axios is getting your data  under XHR*/
         async componentDidMount(){
-          // const response = await axios.get('https://acme-users-api-rev.herokuapp.com/api/companies');
-          // this.setState( { companies: response.data } );
           const companies = (await axios.get('https://acme-users-api-rev.herokuapp.com/api/companies')).data;
           this.setState( { companies } );
-
         }
         render() {
           const { companies } = this.state;
           return (
-            <div>
-              { companies.length }
-            </div>
+            <HashRouter>
+              <div>
+                <div className='nav'>
+                  <Link to='/'>Home</Link>
+                  <Link to='/companies'>Companies ( {companies.length } )</Link>
+                </div>
+                <Route exact path='/' component= { Home } />
+                <Route path='/companies' render= { ()=>  <Companies data={ companies }/>  } />
+              </div>
+            </HashRouter>
           );
         }
       }
